@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+// Required plugin in library module
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.bakehousedigital'
 
 android {
     compileSdkVersion 26
