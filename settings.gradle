@@ -1,1 +1,1 @@
-include ':app', ':resdecorator'
+include ':sample', ':resdecorator'
