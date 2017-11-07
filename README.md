@@ -3,7 +3,7 @@
 Light weight library for decorating app Resources.
 The idea behind it was to be able to use a component that can overwrite the way the resources are accessed in Android without the additional hastle.
 
-An example could be to add enable localization in your app at some point.
+An example could be to add localization to your app at some point.
 Normally you would have to either:
 * extend the TextView classes (TextView, EditText, Button etc), and define a custom xml tag or similar
 * or traverse the view tree

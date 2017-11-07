@@ -22,7 +22,7 @@ import android.content.res.Resources;
  * Used in conjunction with {@link ResourceContextWrapper} it ca be used as a hook to be executed
  * when a default resource is getting retrieved.
  * <p>
- * An example could be to add enable localization in your app at some point.
+ * An example could be to add localization in your app at some point.
  * Normally you would have to either:
  * -> extend the {@link android.widget.TextView} classes, and define a custom xml tag or similar
  * -> or traverse the view tree
