@@ -12,6 +12,11 @@ import android.view.ViewGroup;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+/**
+ * Awesome implementation from guys @Calligraphy
+ *
+ * @author https://github.com/chrisjenx/Calligraphy
+ */
 class ResourceLayoutInflater extends LayoutInflater implements ResourceActivityFactory {
 
     private static final String[] CLASS_PREFIX_LIST = {
@@ -19,15 +24,15 @@ class ResourceLayoutInflater extends LayoutInflater implements ResourceActivityF
             "android.webkit."
     };
 
-    private final ResourceDecoratorFactory mDecorFactory;
-    private boolean mSetPrivateFactory = false;
-    private Field mConstructorArgs = null;
+    private final ResourceDecoratorFactory decorFactory;
+    private boolean setPrivateFactory = false;
+    private Field constructorArgs = null;
 
-    public ResourceLayoutInflater(LayoutInflater original,
-                                  Context newContext,
-                                  final boolean isCloned) {
+    ResourceLayoutInflater(LayoutInflater original,
+                           Context newContext,
+                           final boolean isCloned) {
         super(original, newContext);
-        mDecorFactory = new ResourceDecoratorFactory();
+        decorFactory = new ResourceDecoratorFactory();
         initLayoutFactories(isCloned);
     }
 
@@ -60,11 +65,11 @@ class ResourceLayoutInflater extends LayoutInflater implements ResourceActivityF
 
     private void setPrivateFactoryInternal() {
         // Already tried to set the factory.
-        if (mSetPrivateFactory) return;
+        if (setPrivateFactory) return;
         //if (!hasReflection()) return;
         // Skip if not attached to an activity.
         if (!(getContext() instanceof Factory2)) {
-            mSetPrivateFactory = true;
+            setPrivateFactory = true;
             return;
         }
 
@@ -74,16 +79,16 @@ class ResourceLayoutInflater extends LayoutInflater implements ResourceActivityF
         if (setPrivateFactoryMethod != null) {
             ReflectionUtils.invokeMethod(this,
                     setPrivateFactoryMethod,
-                    new PrivateWrapperFactory2((Factory2) getContext(), this, mDecorFactory));
+                    new PrivateWrapperFactory2((Factory2) getContext(), this, decorFactory));
         }
-        mSetPrivateFactory = true;
+        setPrivateFactory = true;
     }
 
     @Override
     public void setFactory(Factory factory) {
         // Only set our factory and wrap calls to the Factory trying to be set!
         if (!(factory instanceof WrapperFactory)) {
-            super.setFactory(new WrapperFactory(factory, this, mDecorFactory));
+            super.setFactory(new WrapperFactory(factory, this, decorFactory));
         } else {
             super.setFactory(factory);
         }
@@ -94,7 +99,7 @@ class ResourceLayoutInflater extends LayoutInflater implements ResourceActivityF
     public void setFactory2(Factory2 factory2) {
         // Only set our factory and wrap calls to the Factory2 trying to be set!
         if (!(factory2 instanceof WrapperFactory2)) {
-            super.setFactory2(new WrapperFactory2(factory2, mDecorFactory));
+            super.setFactory2(new WrapperFactory2(factory2, decorFactory));
         } else {
             super.setFactory2(factory2);
         }
@@ -108,7 +113,7 @@ class ResourceLayoutInflater extends LayoutInflater implements ResourceActivityF
     @Override
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected View onCreateView(View parent, String name, AttributeSet attrs) throws ClassNotFoundException {
-        return mDecorFactory.onViewCreated(
+        return decorFactory.onViewCreated(
                 super.onCreateView(parent, name, attrs), name, parent, getContext(), attrs);
     }
 
@@ -133,12 +138,12 @@ class ResourceLayoutInflater extends LayoutInflater implements ResourceActivityF
         // at it.
         if (view == null) view = super.onCreateView(name, attrs);
 
-        return mDecorFactory.onViewCreated(view, name, null, view.getContext(), attrs);
+        return decorFactory.onViewCreated(view, name, null, view.getContext(), attrs);
     }
 
     @Override
     public View onActivityCreateView(View parent, View view, String name, Context context, AttributeSet attrs) {
-        return mDecorFactory.onViewCreated(createCustomViewInternal(parent, view, name, context, attrs), context, attrs);
+        return decorFactory.onViewCreated(createCustomViewInternal(parent, view, name, context, attrs), context, attrs);
     }
 
     /**
@@ -259,22 +264,22 @@ class ResourceLayoutInflater extends LayoutInflater implements ResourceActivityF
         // significant difference to performance on Android 4.0+.
 
         if (view == null && name.indexOf('.') > -1) {
-            if (mConstructorArgs == null)
-                mConstructorArgs = ReflectionUtils.getField(LayoutInflater.class, "mConstructorArgs");
+            if (constructorArgs == null)
+                constructorArgs = ReflectionUtils.getField(LayoutInflater.class, "constructorArgs");
 
-            final Object[] mConstructorArgsArr = (Object[]) ReflectionUtils.getValue(mConstructorArgs, this);
+            final Object[] mConstructorArgsArr = (Object[]) ReflectionUtils.getValue(constructorArgs, this);
             final Object lastContext = mConstructorArgsArr[0];
             // The LayoutInflater actually finds out the correct context to use. We just need to set
             // it on the mConstructor for the internal method.
             // Set the constructor ars up for the createView, not sure why we can't pass these in.
             mConstructorArgsArr[0] = viewContext;
-            ReflectionUtils.setValue(mConstructorArgs, this, mConstructorArgsArr);
+            ReflectionUtils.setValue(constructorArgs, this, mConstructorArgsArr);
             try {
                 view = createView(name, null, attrs);
             } catch (ClassNotFoundException ignored) {
             } finally {
                 mConstructorArgsArr[0] = lastContext;
-                ReflectionUtils.setValue(mConstructorArgs, this, mConstructorArgsArr);
+                ReflectionUtils.setValue(constructorArgs, this, mConstructorArgsArr);
             }
         }
         return view;

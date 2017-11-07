@@ -4,6 +4,11 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
+/**
+ * Awesome implementation from guys @Calligraphy
+ *
+ * @author https://github.com/chrisjenx/Calligraphy
+ */
 interface ResourceActivityFactory {
 
     /**

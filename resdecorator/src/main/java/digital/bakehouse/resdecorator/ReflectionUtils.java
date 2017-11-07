@@ -4,6 +4,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * Awesome implementation from guys @Calligraphy
+ *
+ * @author https://github.com/chrisjenx/Calligraphy
+ */
 class ReflectionUtils {
 
     static Field getField(Class clazz, String fieldName) {
