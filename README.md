@@ -24,7 +24,7 @@ allprojects {
 Add the dependency
 ```
 dependencies {
-    compile 'com.github.bakehousedigital:resdecorator:0.3'
+    compile 'com.github.bakehousedigital:resdecorator:0.4'
 }
 ```
 
