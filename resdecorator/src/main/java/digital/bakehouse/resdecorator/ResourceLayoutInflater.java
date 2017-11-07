@@ -280,7 +280,7 @@ class ResourceLayoutInflater extends LayoutInflater implements ResourceActivityF
 
         if (view == null && name.indexOf('.') > -1) {
             if (constructorArgs == null)
-                constructorArgs = ReflectionUtils.getField(LayoutInflater.class, "constructorArgs");
+                constructorArgs = ReflectionUtils.getField(LayoutInflater.class, "mConstructorArgs");
 
             final Object[] mConstructorArgsArr = (Object[]) ReflectionUtils.getValue(constructorArgs, this);
             final Object lastContext = mConstructorArgsArr[0];
