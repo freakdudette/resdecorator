@@ -1,15 +1,16 @@
 # Resdecorator
 
-Light weight library for decorating app Resources.
-The idea behind it was to be able to use a component that can overwrite the way the resources are accessed in Android without the additional hastle.
+Lightweight library for decorating Android app resources.
+It allows you to overwrite how resources are accessed in Android without the additional hassle.
 
-An example could be to add localization to your app at some point.
-Normally you would have to either:
-* extend the TextView classes (TextView, EditText, Button etc), and define a custom xml tag or similar
-* or traverse the view tree
-* or to actually call TextView#setText for all of the app's labels
+If you want to add internationalization to your app, with all the labels and messages defined in a backend system, CMS or similar, normally you would have to either:
+* create alternative string resources in "values_locale" folder. But this is not flexible or dynamic, because you would have to:
+generate a new strings.xml file for each language and import it into your app, and create a new release each time a new language is added or a translation is updated. OR
+* extend the TextView classes (TextView, EditText, Button etc), and define a custom xml tag or similar, and implement a logic that maps a key to a translation retrieved from a web service OR 
+* traverse the view tree and set the strings OR
+* to actually call TextView#setText for all of the app's labels
 
-Using this library you can just hook into string id resolving so that each time you set it for the text or hint tag in the XML or by actually using Context#getString your custom logic could overwrite the default string or decorate it.
+Using this library you can just hook into the mechanism that resolves string ids so that each time you set it for the text (or hint) tag in the XML or by calling Context#getString your custom logic could overwrite the default string or decorate it.
 
 ## Getting Started
 
@@ -28,11 +29,13 @@ dependencies {
 }
 ```
 
-### Usage and Example
+### Usage
 
-Inject the ResourceContextWrapper by wrapping the Activity Context. 
-For example, let's say that for some reason you want every String resource retrieved from resources to be upperCase and have all the spaces replaced by underscores:
+Inject the ResourceContextWrapper by wrapping the Activity Context and providing your own implementation of the ResourceDecorator.
 
+### Example
+
+For example, to make every string retrieved from resources upper case and replace all spaces by underscores, in your activity do this:
 ```
 @Override
 protected void attachBaseContext(Context newBase) {
@@ -43,12 +46,11 @@ protected void attachBaseContext(Context newBase) {
     }));
 }
 ```
-
 That is all!
 
 ## Authors
 
-* **Roman Reaboi** - *Initial work* - [bakehousedigital](https://github.com/bakehousedigital)
+* **rrdev** - *Initial work* - [bakehousedigital](https://github.com/bakehousedigital)
 
 
 ## License
