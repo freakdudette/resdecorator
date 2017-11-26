@@ -29,12 +29,3 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(path: ':resdecorator')
 }
-
-ext.getVersionName = {
-    return "haha"
-}
-
-task showVersion << {
-    // Use inherited method
-    println 'VersionName: ' + getVersionName()
-}
