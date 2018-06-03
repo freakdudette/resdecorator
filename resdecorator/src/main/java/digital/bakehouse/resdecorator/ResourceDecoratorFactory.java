@@ -18,7 +18,8 @@ package digital.bakehouse.resdecorator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.TextView;
+
+import static digital.bakehouse.resdecorator.ResourceUtils.decorate;
 
 class ResourceDecoratorFactory {
 
@@ -33,32 +34,4 @@ class ResourceDecoratorFactory {
         decorate(view, attrs);
         return view;
     }
-
-    private void decorate(View view, AttributeSet attrs) {
-        if (view instanceof TextView) {
-            setText((TextView) view, attrs);
-            setHint((TextView) view, attrs);
-        }
-    }
-
-    private void setText(TextView textView, AttributeSet attrs) {
-        int textResId = attrs.getAttributeResourceValue(
-                "http://schemas.android.com/apk/res/android",
-                "text",
-                -1);
-        if (textResId != -1) {
-            textView.setText(textResId);
-        }
-    }
-
-    private void setHint(TextView textView, AttributeSet attrs) {
-        int textResId = attrs.getAttributeResourceValue(
-                "http://schemas.android.com/apk/res/android",
-                "hint",
-                -1);
-        if (textResId != -1) {
-            textView.setHint(textResId);
-        }
-    }
-
 }

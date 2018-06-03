@@ -15,10 +15,17 @@
  */
 package digital.bakehouse.resdecorator;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
+import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
+
+import digital.bakehouse.resdecorator.viewdecor.ViewDecorator;
+import digital.bakehouse.resdecorator.viewdecor.ViewDecoratorInstaller;
 
 /**
  * Wraps the {@link Context} with the sole purpose of customizing the way the app
@@ -31,8 +38,8 @@ import android.view.LayoutInflater;
  */
 public class ResourceContextWrapper extends ContextWrapper {
 
+    private final ResourceDecorator resourceDecorator;
     private Resources resources;
-    private ResourceDecorator resourceDecorator;
     private LayoutInflater inflater;
 
     private ResourceContextWrapper(Context base,
@@ -73,5 +80,21 @@ public class ResourceContextWrapper extends ContextWrapper {
      */
     public static ResourceContextWrapper wrap(Context context, ResourceDecorator resDecorator) {
         return new ResourceContextWrapper(context, resDecorator);
+    }
+
+    public static void initialize(Activity activity) {
+        ViewDecorator decorator = new ViewDecorator() {
+            @Override
+            public void decorate(View parent, View view,
+                                 Context context, AttributeSet attrs) {
+                ResourceUtils.decorate(view, attrs);
+            }
+        };
+        ViewDecoratorInstaller installer = new ViewDecoratorInstaller(decorator);
+        if (activity instanceof AppCompatActivity) {
+            installer.install((AppCompatActivity) activity);
+        } else {
+            installer.install(activity);
+        }
     }
 }
