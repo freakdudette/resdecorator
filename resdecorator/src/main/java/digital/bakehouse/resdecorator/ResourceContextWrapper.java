@@ -82,6 +82,29 @@ public class ResourceContextWrapper extends ContextWrapper {
         return new ResourceContextWrapper(context, resDecorator);
     }
 
+    /**
+     * Initializes decorated layout inflation needed ONLY in case {@link ResourceContextWrapper}
+     * is used in conjunction with another {@link ContextWrapper} which might overwrite
+     * the default logic used by this class.
+     * Invocation of this method is not needed otherwise.
+     * Should be called in {@link Activity} or {@link AppCompatActivity} onCreate
+     * method before the call to super.onCreate
+     * <p>
+     * <pre>
+     * {@code
+     * public class MainActivity extends AppCompatActivity {
+     *
+     *      @Override
+     *      protected void onCreate(Bundle savedInstanceState) {
+     *              ResourceContextWrapper.initialize(this);
+     *              super.onCreate(savedInstanceState);
+     *              setContentView(R.layout.activity_main);
+     *      }
+     * }
+     * </pre>
+     *
+     * @param activity
+     */
     public static void initialize(Activity activity) {
         ViewDecorator decorator = new ViewDecorator() {
             @Override
