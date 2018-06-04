@@ -12,6 +12,10 @@ generate a new strings.xml file for each language and import it into your app, a
 
 Using this library you can just hook into the mechanism that resolves string ids so that each time you set it for the text (or hint) tag in the XML or by calling Context#getString your custom logic could overwrite the default string or decorate it.
 
+## Disclaimer
+The current version decorates the access of strings from resources.
+Future versions will add the same approach for all resources accessible via the *Resources* class.
+
 ## Getting Started
 
 Add it in your root build.gradle at the end of repositories:
@@ -25,13 +29,37 @@ allprojects {
 Add the dependency
 ```
 dependencies {
-    compile 'com.github.bakehousedigital:resdecorator:0.4'
+    compile 'com.github.bakehousedigital:resdecorator:0.5'
 }
 ```
 
 ### Usage
 
 Inject the ResourceContextWrapper by wrapping the Activity Context and providing your own implementation of the ResourceDecorator.
+```
+@Override
+protected void attachBaseContext(Context newBase) {
+    super.attachBaseContext(ResourceContextWrapper.wrap(newBase, new ResourceDecorator() {
+        public String getString(Resources resources, int id, Object... formatArgs) {
+            //Return whatever string. If the returned value is null, then the default
+            //string resource implementation will be used -> Resources.getString(id);
+            //...
+        }
+    }));
+}
+```
+
+#### Important:
+If you use **resdecorator** in conjunction with other libraries which overwrite the layout inflation mechanism, such as *Calligraphy*, don't forget to also add *ResourceContextWrapper.initialize(this);* in your *Activity.onCreate* before calling *super.onCreate*.
+```
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    ResourceContextWrapper.initialize(this);
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+}
+```
+If not, then the invocation of the *initialize* method is not necessary.
 
 ### Example
 
@@ -56,7 +84,7 @@ That is all!
 ## License
 
 ```
-Copyright 2017 bakehousedigital
+Copyright 2018 bakehousedigital
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
