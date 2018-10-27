@@ -29,7 +29,7 @@ allprojects {
 Add the dependency
 ```
 dependencies {
-    compile 'com.github.bakehousedigital:resdecorator:0.7'
+    implementation 'com.github.bakehousedigital:resdecorator:0.8'
 }
 ```
 
