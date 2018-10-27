@@ -29,11 +29,21 @@ allprojects {
 Add the dependency
 ```
 dependencies {
-    compile 'com.github.bakehousedigital:resdecorator:0.5'
+    compile 'com.github.bakehousedigital:resdecorator:0.6'
 }
 ```
 
 ### Usage
+Initialize the ResourceContextWrapper by calling *ResourceContextWrapper.initialize()* in your *Application.onCreate()*
+```
+public class SampleApp extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        ResourceContextWrapper.initialize();
+    }
+}
+```
 
 Inject the ResourceContextWrapper by wrapping the Activity Context and providing your own implementation of the ResourceDecorator.
 ```
@@ -50,16 +60,22 @@ protected void attachBaseContext(Context newBase) {
 ```
 
 #### Important:
-If you use **resdecorator** in conjunction with other libraries which overwrite the layout inflation mechanism, such as *Calligraphy*, don't forget to also add *ResourceContextWrapper.initialize(this);* in your *Activity.onCreate* before calling *super.onCreate*.
+If you use **resdecorator** in conjunction with other libraries which overwrite the layout inflation mechanism, such as *Calligraphy*, pass the pre-configured *ViewPump.Builder* instance to the *ResourceContextWrapper.initialize()* method
 ```
-@Override
-protected void onCreate(Bundle savedInstanceState) {
-    ResourceContextWrapper.initialize(this);
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+public class SampleApp extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        ResourceContextWrapper.initialize(
+                    ViewPump.builder()
+                            .addInterceptor(new CalligraphyInterceptor(
+                                    new CalligraphyConfig.Builder()
+                                            .setDefaultFontPath("fonts/ArialMT.ttf")
+                                            .setFontAttrId(R.attr.fontPath)
+                                            .build())
+                            ));}
 }
 ```
-If not, then the invocation of the *initialize* method is not necessary.
 
 ### Example
 
@@ -98,6 +114,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
-## Acknowledgments
-
-* A big thanks to Calligraphy devs (https://github.com/chrisjenx/Calligraphy), your lib is awesome!
