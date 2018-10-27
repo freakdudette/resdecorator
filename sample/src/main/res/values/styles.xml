@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="FontSegoe">
+        <item name="fontPath">fonts/SegoeScript.ttf</item>
+    </style>
+
 </resources>
