@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">ResourceDecoratorSample</string>
     <string name="hello_text">Hello World!</string>
+    <string name="dynamic_text">This is a text set with setText(int resourceId)</string>
 </resources>

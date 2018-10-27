@@ -2,8 +2,9 @@ package digital.bakehouse.resdecorator.sample;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
 import digital.bakehouse.resdecorator.ResourceContextWrapper;
 import digital.bakehouse.resdecorator.ResourceDecorator;
@@ -12,9 +13,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ResourceContextWrapper.initialize(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ((TextView)findViewById(R.id.dynamic_text)).setText(R.string.dynamic_text);
     }
 
     @Override

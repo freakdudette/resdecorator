@@ -15,17 +15,14 @@
  */
 package digital.bakehouse.resdecorator;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
-import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
 
-import digital.bakehouse.resdecorator.viewdecor.ViewDecorator;
-import digital.bakehouse.resdecorator.viewdecor.ViewDecoratorInstaller;
+import io.github.inflationx.viewpump.InflateResult;
+import io.github.inflationx.viewpump.Interceptor;
+import io.github.inflationx.viewpump.ViewPump;
+import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 /**
  * Wraps the {@link Context} with the sole purpose of customizing the way the app
@@ -40,7 +37,6 @@ public class ResourceContextWrapper extends ContextWrapper {
 
     private final ResourceDecorator resourceDecorator;
     private Resources resources;
-    private LayoutInflater inflater;
 
     private ResourceContextWrapper(Context base,
                                    ResourceDecorator resourceDecorator) {
@@ -57,18 +53,6 @@ public class ResourceContextWrapper extends ContextWrapper {
         return resources;
     }
 
-    @Override
-    public Object getSystemService(String name) {
-        if (LAYOUT_INFLATER_SERVICE.equals(name)) {
-            if (inflater == null) {
-                inflater = new ResourceLayoutInflater(
-                        LayoutInflater.from(getBaseContext()), this, false);
-            }
-            return inflater;
-        }
-        return super.getSystemService(name);
-    }
-
     /**
      * Wraps the context with customized resource retrieval
      *
@@ -79,45 +63,24 @@ public class ResourceContextWrapper extends ContextWrapper {
      * @see ResourceDecorator for more details
      */
     public static ResourceContextWrapper wrap(Context context, ResourceDecorator resDecorator) {
+        context = ViewPumpContextWrapper.wrap(context);
         return new ResourceContextWrapper(context, resDecorator);
     }
 
-    /**
-     * Initializes decorated layout inflation needed ONLY in case {@link ResourceContextWrapper}
-     * is used in conjunction with another {@link ContextWrapper} which might overwrite
-     * the default logic used by this class.
-     * Invocation of this method is not needed otherwise.
-     * Should be called in {@link Activity} or {@link AppCompatActivity} onCreate
-     * method before the call to super.onCreate
-     * <p>
-     * <pre>
-     * {@code
-     * public class MainActivity extends AppCompatActivity {
-     *
-     *      @Override
-     *      protected void onCreate(Bundle savedInstanceState) {
-     *              ResourceContextWrapper.initialize(this);
-     *              super.onCreate(savedInstanceState);
-     *              setContentView(R.layout.activity_main);
-     *      }
-     * }
-     * </pre>
-     *
-     * @param activity
-     */
-    public static void initialize(Activity activity) {
-        ViewDecorator decorator = new ViewDecorator() {
-            @Override
-            public void decorate(View parent, View view,
-                                 Context context, AttributeSet attrs) {
-                ResourceUtils.decorate(view, attrs);
-            }
-        };
-        ViewDecoratorInstaller installer = new ViewDecoratorInstaller(decorator);
-        if (activity instanceof AppCompatActivity) {
-            installer.install((AppCompatActivity) activity);
-        } else {
-            installer.install(activity);
-        }
+    public static void initialize() {
+        initialize(ViewPump.builder());
+    }
+
+    public static void initialize(ViewPump.Builder viewPumpBuilder) {
+        ViewPump.init(viewPumpBuilder
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public InflateResult intercept(Chain chain) {
+                        InflateResult result = chain.proceed(chain.request());
+                        ResourceUtils.decorate(result.view(), result.attrs());
+                        return result;
+                    }
+                })
+                .build());
     }
 }
