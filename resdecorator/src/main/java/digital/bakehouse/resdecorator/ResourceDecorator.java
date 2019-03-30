@@ -60,4 +60,6 @@ public interface ResourceDecorator {
      * </pre>
      */
     String getString(Resources resources, int id, Object... params);
+
+    String getCharSequence(Resources resources, int id, Object... params);
 }

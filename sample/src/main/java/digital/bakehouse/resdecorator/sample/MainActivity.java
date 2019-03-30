@@ -31,6 +31,11 @@ public class MainActivity extends AppCompatActivity {
             public String getString(Resources resources, int id, Object... params) {
                 return resources.getString(id).toUpperCase().replaceAll(" ", "_");
             }
+
+            @Override
+            public String getCharSequence(Resources resources, int id, Object... params) {
+                return getString(resources, id, params);
+            }
         };
     }
 }

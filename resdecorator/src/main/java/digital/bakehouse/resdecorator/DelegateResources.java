@@ -35,7 +35,7 @@ class DelegateResources extends Resources {
 
     @Override
     public CharSequence getText(int id) throws NotFoundException {
-        CharSequence result = resourceDecorator.getString(delegate, id);
+        CharSequence result = resourceDecorator.getCharSequence(delegate, id);
         if (result != null) {
             return result;
         }
