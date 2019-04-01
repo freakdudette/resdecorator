@@ -60,4 +60,19 @@ public interface ResourceDecorator {
      * </pre>
      */
     String getString(Resources resources, int id, Object... params);
+
+    /**
+     * Implement this when you'd like to return a CharSequence type or sub-type (e.g Spanned).
+     * This is useful for cases when the returned text is a HTML type char sequence (by using android.text.Html#fromHtml(java.lang.String, int)),
+     * which would be rendered in text views.
+     *
+     * If this is not needed, the default implemnetation may just call the overridden
+     * getString(android.content.res.Resources, int, java.lang.Object...) method
+     *
+     * @param resources Raw resources
+     * @param id        Id of the resource to resolve
+     * @param params    Arguments to be used while formatting the resolved id
+     * @return If returns null -> the loaded text will be retrieved using the default method.
+     */
+    CharSequence getText(Resources resources, int id, Object... params);
 }
